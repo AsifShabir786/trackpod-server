@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const connectToDB = require("./db/conn");
  const leadsCRUD = require("./routes/leadsCRUD");
+ const MarginData = require("./routes/MarginData");
+const Orders = require("./routes/Orders"); // ← Add this
+const cron = require("node-cron");
+const axios = require("axios");
+
 
 
 const app = express();
@@ -13,8 +18,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
  connectToDB();
-
+app.use("/orders", Orders); // ← Register route
+cron.schedule("0 * * * *", async () => {
+  console.log("Fetching orders automatically...");
+  try {
+    await axios.get("http://localhost:5000/orders/fetch");
+  } catch (err) {
+    console.error("Auto-fetch failed:", err.message);
+  }
+});
   app.use("/leads", leadsCRUD);
+  app.use("/MarginData", MarginData);
+
 
 
  app.use((req, res, next) => {

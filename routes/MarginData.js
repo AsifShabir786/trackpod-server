@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const PrimeassetForm = require("../models/leadsCRUD");
-const LeadsCRUD = require("../models/leadsCRUD");
+// const PrimeassetForm = require("../models/leadsCRUD");
+const MarginData = require("../models/MarginData");
 
 const mongoose = require("mongoose");
   
 
 router.get("/", (req, res, next) => {
-  LeadsCRUD.find()
+    MarginData.find()
     .then((result) => {
       res.status(200).json({
-        leadsCRUDData: result,
+        marginDataCRUDData: result,
       });
     })
     .catch((err) => {
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
     console.log("Incoming request data:", req.body); // Log request payload
 
     // Directly create a new lead with all provided fields
-    const lead = new LeadsCRUD(req.body);
+    const lead = new MarginData(req.body);
 
     // Save to MongoDB
     await lead.save();
@@ -42,9 +42,9 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", (req, res, next) => {
   console.log(req.params.id);
-  LeadsCRUD.findById(req.params.id).then(result=>{
+  MarginData.findById(req.params.id).then(result=>{
 res.status(200).json({
-  leadsCRUD:result
+    marginData:result
 })
   }).catch(err=>{
     console.log(err);
@@ -53,18 +53,22 @@ res.status(200).json({
     })
   })
 });
-router.delete('/:id',(req,res,next)=>{
-  LeadsCRUD.remove({_id:req.params.id})
-.then(result=>{
-    res.status(200).json({
-        message:"Beds deleted",
-        result:result
-    })
-}).catch(err=>{
-    res.status(500).json({
-        error:err
-    })
-})
-})
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const result = await MarginData.findByIdAndDelete(req.params.id);
+        if (!result) {
+            return res.status(404).json({ message: "Bed not found" });
+        }
+        res.status(200).json({
+            message: "Bed deleted successfully",
+            result: result
+        });
+    } catch (err) {
+        res.status(500).json({
+            error: err.message
+        });
+    }
+});
+
  
 module.exports = router;
