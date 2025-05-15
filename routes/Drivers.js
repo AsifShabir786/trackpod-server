@@ -1,7 +1,7 @@
 // routes/Drivers.js
 const express = require("express");
 const axios = require("axios");
-const Driver = require("../models/Driver");
+const Drivers = require("../models/Drivers");
 
 const router = express.Router();
 const trackPodApiKey = "0c340847-b764-4ff8-9250-0bb089486648";
@@ -23,8 +23,8 @@ router.get("/fetch", async (req, res) => {
     }
 
     // Optional: clean existing data first
-    await Driver.deleteMany({});
-    await Driver.insertMany(drivers);
+    await Drivers.deleteMany({});
+    await Drivers.insertMany(drivers);
 
     res.status(200).json({ message: "Drivers fetched and saved", count: drivers.length });
   } catch (error) {
@@ -35,7 +35,7 @@ router.get("/fetch", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const orders = await Driver.find();
+    const orders = await Drivers.find();
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: "Error fetching from DB" });
@@ -54,7 +54,7 @@ router.post("/add", async (req, res) => {
     });
 
     // Optionally save to DB if Track-POD API call is successful
-    const savedDriver = await Driver.create(newDriver);
+    const savedDriver = await Drivers.create(newDriver);
 
     res.status(201).json({ message: "Driver added successfully", trackPodResponse: response.data, dbEntry: savedDriver });
   } catch (error) {
