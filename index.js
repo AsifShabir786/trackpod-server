@@ -17,7 +17,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://trackpod-yat3.vercel.app"
+  "https://track-pod.vercel.app"
 ];
 
 app.use(cors({
