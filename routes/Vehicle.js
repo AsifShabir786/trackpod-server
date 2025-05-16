@@ -89,4 +89,22 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete vehicle" });
   }
 });
+router.get("/", async (req, res) => {
+  const { number } = req.query;
+
+  try {
+    const response = await axios.get(`${trackPodApiUrl}/Vehicle`, {
+      params: number ? { number } : {},
+      headers: {
+        accept: "text/plain",
+        "X-API-KEY": trackPodApiKey,
+      },
+    });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error fetching vehicle(s):", error.message);
+    res.status(500).json({ error: "Failed to fetch vehicle(s)" });
+  }
+});
 module.exports = router;
