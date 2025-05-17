@@ -232,6 +232,247 @@ router.put("/trackId/:trackId", async (req, res) => {
     });
   }
 });
+router.get("/route/date/:routeDate", async (req, res) => {
+  try {
+    const { routeDate } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Route/Date/${encodeURIComponent(routeDate)}`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "text/plain",
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: `Orders fetched for route date ${routeDate}`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error fetching orders by route date:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch orders",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.get("/route/code/:routeCode", async (req, res) => {
+  try {
+    const { routeCode } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Route/Code/${routeCode}`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "text/plain",
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: `Orders fetched for route code ${routeCode}`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error fetching orders by route code:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch orders",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.put("/number/:orderNumber/status", async (req, res) => {
+  try {
+    const { orderNumber } = req.params;
+    const { Status, RejectReason } = req.body;
+
+    const response = await axios.put(
+      `${trackPodApiUrl}/Order/Number/${orderNumber}/Status`,
+      { Status, RejectReason },
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "text/plain",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: `Order ${orderNumber} status updated successfully`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to update order status",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.put("/trackId/:trackId/status", async (req, res) => {
+  try {
+    const { trackId } = req.params;
+    const { Status, RejectReason } = req.body;
+
+    const response = await axios.put(
+      `${trackPodApiUrl}/Order/TrackId/${trackId}/Status`,
+      { Status, RejectReason },
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "text/plain",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: `Order with TrackId ${trackId} status updated successfully`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error updating order status by TrackId:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to update order status by TrackId",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.put("/id/:orderId/status", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { Status, RejectReason } = req.body;
+
+    const response = await axios.put(
+      `${trackPodApiUrl}/Order/Id/${orderId}/Status`,
+      { Status, RejectReason },
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "text/plain",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: `Order with ID ${orderId} status updated successfully`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error updating order status by ID:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to update order status by ID",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.get("/number/:orderNumber/pdf", async (req, res) => {
+  try {
+    const { orderNumber } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Number/${orderNumber}/pdf`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "application/pdf",
+        },
+        responseType: "arraybuffer", // Important to handle PDF binary data
+      }
+    );
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching order PDF by number:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch order PDF",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+router.get("/id/:orderId/pdf", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Id/${orderId}/pdf`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "application/pdf",
+        },
+        responseType: "arraybuffer", // for PDF binary data
+      }
+    );
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching order PDF by ID:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch order PDF",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+router.get("/number/:shippingLabelNumber/shipping-label", async (req, res) => {
+  try {
+    const { shippingLabelNumber } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Number/${shippingLabelNumber}/shipping-label`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "application/pdf",
+        },
+        responseType: "arraybuffer", // to handle PDF binary data
+      }
+    );
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching shipping label PDF:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch shipping label PDF",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+router.get("/id/:orderId/shipping-label", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const response = await axios.get(
+      `${trackPodApiUrl}/Order/Id/${orderId}/shipping-label`,
+      {
+        headers: {
+          "X-API-KEY": trackPodApiKey,
+          "accept": "application/pdf",
+        },
+        responseType: "arraybuffer", // handle PDF binary data
+      }
+    );
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching shipping label PDF by order ID:", error.message);
+    res.status(error.response?.status || 500).json({
+      error: "Failed to fetch shipping label PDF",
+      details: error.response?.data || error.message,
+    });
+  }
+});
 
 // router.get("/fetch", async (req, res) => {
 //   try {
