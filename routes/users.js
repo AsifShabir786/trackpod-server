@@ -100,6 +100,52 @@ router.post("/api/auth/signup", async function (req, res, next) {
   }
 });
 
+router.delete("/api/auth/delete/:id", async function (req, res) {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).send("User not found");
+    }
+    res.send({ message: "User deleted successfully", user: deletedUser });
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).send("Something went wrong while deleting the user.");
+  }
+});
+router.put("/api/auth/update/:id", async function (req, res) {
+  try {
+    const updateFields = _.pick(req.body, [
+      "firstName",
+      "lastName",
+      "email",
+      "username",
+      "mobile",
+      "profilePicture",
+      "userType"
+    ]);
+
+    // If password is being updated, hash it
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
+
+    res.send(updatedUser);
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).send("Something went wrong while updating the user.");
+  }
+});
 
 
 // // Reset passowrd
