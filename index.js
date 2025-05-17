@@ -24,7 +24,7 @@ const app = express();
 // ];
 
 app.use(cors({
-  origin: "https://track-pod.vercel.app/",
+  origin: "https://track-pod.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));app.use(express.json());
@@ -32,6 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 
  connectToDB();
 app.use("/orders", Orders); // ← Register route
+app.use("/users", usersRouter);
+
 // cron.schedule("0 * * * *", async () => {
 //   console.log("Fetching orders automatically...");
 //   try {
@@ -43,7 +45,6 @@ app.use("/orders", Orders); // ← Register route
   app.use("/leads", leadsCRUD);
   app.use("/MarginData", MarginData);
   app.use("/Vehicle", Vehicle);
-app.use("/users", usersRouter);
 
 
 app.use("/drivers", Drivers);
