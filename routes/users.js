@@ -8,22 +8,48 @@ const auth = require("../middleware/auth.js");
 const crypto=require('crypto')
 
 /* POST User signin account. */
+// router.post("/api/auth/signin", async (req, res) => {
+//   //  Now find the user by their email address
+//   let user = await User.findOne({ email: req.body.email });
+//   if (!user) {
+//     return res.status(400).send("Incorrect email or password.");
+//   }
+
+//   // Then validate the Credentials in MongoDB match
+//   // those provided in the request
+//   const validPassword = await bcrypt.compare(req.body.password, user.password);
+//   if (!validPassword) {
+//     return res.status(400).send("Incorrect email or password.");
+//   }
+  
+//   const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+//   res.send({ access_token: token });
+// });
 router.post("/api/auth/signin", async (req, res) => {
-  //  Now find the user by their email address
   let user = await User.findOne({ email: req.body.email });
   if (!user) {
     return res.status(400).send("Incorrect email or password.");
   }
 
-  // Then validate the Credentials in MongoDB match
-  // those provided in the request
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
     return res.status(400).send("Incorrect email or password.");
   }
-  
+
+  // Generate token
   const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
-  res.send({ access_token: token });
+
+  // Convert MongoDB user object to plain object
+  const userData = user.toObject();
+
+  // Remove password and other sensitive info
+  delete userData.password;
+
+  // Respond with token and user data
+  res.send({
+    access_token: token,
+    user: userData
+  });
 });
 
 router.post("/", async (req, res) => {
