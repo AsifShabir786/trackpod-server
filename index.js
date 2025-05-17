@@ -8,6 +8,7 @@ const connectToDB = require("./db/conn");
 const Orders = require("./routes/Orders"); // ← Add this
 const Drivers = require("./routes/Drivers");
 const Vehicle = require("./routes/Vehicle");
+var usersRouter = require("./routes/users.js");
 
 
 // const cron = require("node-cron");
@@ -42,6 +43,7 @@ app.use("/orders", Orders); // ← Register route
   app.use("/leads", leadsCRUD);
   app.use("/MarginData", MarginData);
   app.use("/Vehicle", Vehicle);
+app.use("/users", usersRouter);
 
 
 app.use("/drivers", Drivers);
