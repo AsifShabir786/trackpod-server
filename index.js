@@ -3,35 +3,40 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const connectToDB = require("./db/conn");
- const leadsCRUD = require("./routes/leadsCRUD");
- const MarginData = require("./routes/MarginData");
-const Orders = require("./routes/Orders"); // ← Add this
+
+const leadsCRUD = require("./routes/leadsCRUD");
+const MarginData = require("./routes/MarginData");
+const Orders = require("./routes/Orders");
 const Drivers = require("./routes/Drivers");
 const Vehicle = require("./routes/Vehicle");
-var usersRouter = require("./routes/users.js");
-
-
-// const cron = require("node-cron");
-const axios = require("axios");
-
-
+const usersRouter = require("./routes/users.js");
 
 const app = express();
 
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://track-pod.vercel.app"
-// ];
+// ✅ CORS configuration
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://track-pod.vercel.app"
+];
 
 app.use(cors({
-  origin: "https://track-pod.vercel.app",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
-}));app.use(express.json());
+}));
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
- connectToDB();
-app.use("/orders", Orders); // ← Register route
+connectToDB();
+
+app.use("/orders", Orders);
 app.use("/users", usersRouter);
 
 // cron.schedule("0 * * * *", async () => {
