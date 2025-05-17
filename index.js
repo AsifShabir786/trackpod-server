@@ -18,13 +18,13 @@ const axios = require("axios");
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://track-pod.vercel.app"
-];
+// const allowedOrigins = [
+//   "http://localhost:3000",
+//   "https://track-pod.vercel.app"
+// ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: "https://track-pod.vercel.app/",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));app.use(express.json());
