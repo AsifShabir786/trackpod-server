@@ -147,6 +147,15 @@ router.put("/api/auth/update/:id", async function (req, res) {
   }
 });
 
+router.get("/api/auth/users", async function (req, res) {
+  try {
+    const users = await User.find().select("-password"); // exclude password
+    res.send(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // // Reset passowrd
 // router.post("/reset-password", async (req, res) => {
